@@ -1,14 +1,15 @@
 trigger: none
 pool: RahulAgentPool
+
 variables:
-scn : 'RahulServiceConnection'
+  scn: 'RahulServiceConnection'
 
 steps:
 - task: TerraformInstaller@1
   inputs:
     terraformVersion: 'latest'
 - task: TerraformTask@5
-  displayName:'TFRM INIT'
+  displayName: 'TFRM INIT'
   inputs:
     provider: 'azurerm'
     command: 'init'
@@ -18,7 +19,7 @@ steps:
     backendAzureRmKey: 'rahul.tfstate'
 
 - task: TerraformTask@5
-  displayName:'TFRM fmt'
+  displayName: 'TFRM fmt'
   inputs:
     provider: 'azurerm'
     command: 'custom'
@@ -27,22 +28,23 @@ steps:
     environmentServiceNameAzureRM: '$(scn)'
 
 - task: TerraformTask@5
-  displayName:'TFRM vdate'
+  displayName: 'TFRM vdate'
   inputs:
     provider: 'azurerm'
     command: 'validate'
 
 - task: TerraformTask@5
-  displayName:'TFRM plan'
+  displayName: 'TFRM plan'
   inputs:
     provider: 'azurerm'
     command: 'plan'
     environmentServiceNameAzureRM: '$(scn)'
 
 - task: TerraformTask@5
-  displayName:'TFRM APLY'
+  displayName: 'TFRM APLY'
   inputs:
     provider: 'azurerm'
     command: 'apply'
     environmentServiceNameAzureRM: '$(scn)'
+
 
