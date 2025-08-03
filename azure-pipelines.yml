@@ -1,0 +1,48 @@
+trigger: none
+pool: RahulAgentPool
+variables:
+scn : 'RahulServiceConnection'
+
+steps:
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: 'latest'
+- task: TerraformTask@5
+  displayName:'TFRM INIT'
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    backendServiceArm: '$(scn)'
+    backendAzureRmStorageAccountName: 'stgtest0076'
+    backendAzureRmContainerName: 'statefiles'
+    backendAzureRmKey: 'rahul.tfstate'
+
+- task: TerraformTask@5
+  displayName:'TFRM fmt'
+  inputs:
+    provider: 'azurerm'
+    command: 'custom'
+    outputTo: 'console'
+    customCommand: 'fmt'
+    environmentServiceNameAzureRM: '$(scn)'
+
+- task: TerraformTask@5
+  displayName:'TFRM vdate'
+  inputs:
+    provider: 'azurerm'
+    command: 'validate'
+
+- task: TerraformTask@5
+  displayName:'TFRM plan'
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    environmentServiceNameAzureRM: '$(scn)'
+
+- task: TerraformTask@5
+  displayName:'TFRM APLY'
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    environmentServiceNameAzureRM: '$(scn)'
+
