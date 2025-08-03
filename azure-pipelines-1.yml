@@ -2,7 +2,7 @@ trigger: none
 pool: RahulAgentPool
 variables:
   backend_scn: 'RahulServiceConnection'   # Define the variable here
-  config_path: '$(System.DefaultWorkingDirectory)/todoinfra'
+  config_path: '$(System.DefaultWorkingDirectory)'
   runVdate: true   # Convert parameters to variables
   runFmt: true
   runPlan: true
