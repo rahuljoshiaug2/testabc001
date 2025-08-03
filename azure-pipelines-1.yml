@@ -3,25 +3,17 @@ pool: RahulAgentPool
 variables:
   backend_scn: 'RahulServiceConnection'   # Define the variable here
   config_path: '$(System.DefaultWorkingDirectory)/todoinfra'
-parameters:
-  - name: runVdate
-    type: boolean
-    default: true
-  - name: runFmt
-    type: boolean
-    default: true
-  - name: runplan
-    type: boolean
-    default: true
-  - name: runApply
-    type: boolean
-    default: true
+  runVdate: true   # Convert parameters to variables
+  runFmt: true
+  runPlan: true
+  runApply: true
 
 steps:
 - task: TerraformInstaller@1
   displayName: 'Install terraform'
   inputs:
     terraformVersion: 'latest'
+
 - task: TerraformTask@5
   displayName: 'Init'
   inputs:
@@ -32,6 +24,7 @@ steps:
     backendAzureRmStorageAccountName: 'stgtest0076'
     backendAzureRmContainerName: 'statefiles'
     backendAzureRmKey: 'rahul.tfstate'
+
 - task: TerraformTask@5
   displayName: 'terraform fmt'
   inputs:
@@ -40,27 +33,26 @@ steps:
     outputTo: 'console'
     customCommand: 'fmt'
     environmentServiceNameAzureRM: '$(backend_scn)'
-    if: eq(parameters.runFmt, true) 
+  condition: eq(variables.runFmt, true)  # Use condition here instead of `if`
 
 - task: TerraformTask@5
   displayName: 'terraform validate'
   inputs:
     provider: 'azurerm'
     command: 'validate'
-    if: eq(parameters.runVdate, true) 
+  condition: eq(variables.runVdate, true)  # Use condition here instead of `if`
+
 - task: TerraformTask@5
   inputs:
     provider: 'azurerm'
     command: 'plan'
     environmentServiceNameAzureRM: '$(backend_scn)'
-   if: eq(parameters.runPlan, true) 
+  condition: eq(variables.runPlan, true)  # Use condition here instead of `if`
+
 - task: TerraformTask@5
   inputs:
     provider: 'azurerm'
     command: 'apply'
     commandOptions: '-auto-approve'
     environmentServiceNameAzureRM: '$(backend_scn)'
-    if: eq(parameters.runApply, true) 
-
-
-
+  condition: eq(variables.runApply, true)  # Use condition here instead of `if`
